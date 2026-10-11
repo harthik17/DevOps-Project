@@ -1,0 +1,15 @@
+# Add these imports near the top of app/main.py:
+from fastapi import HTTPException
+from app.prometheus_client import get_live_metrics, QUERIES, PROMETHEUS_URL
+
+# Add these routes below the existing routes:
+@app.get("/api/metrics/live")
+def live_metrics():
+    result = get_live_metrics()
+    if not result["available_metrics"]:
+        raise HTTPException(status_code=503, detail=result)
+    return result
+
+@app.get("/api/metrics/queries")
+def metrics_queries():
+    return {"prometheus_url": PROMETHEUS_URL, "queries": QUERIES}

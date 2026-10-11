@@ -1,0 +1,38 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Environment Variables & Secrets
+.env
+*.pem
+*.key
+*.cert
+*.crt
+
+# Temporary & Log Files
+*.log
+*.zip
+*.tar.gz
+data/received_alerts.jsonl
+
+# ML Artifacts & Runs
+mlruns/
+
+# Executables
+scripts/cloudflared.exe
+
+# OS generated
+.DS_Store
+Thumbs.db
+desktop.ini

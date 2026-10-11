@@ -1,0 +1,5 @@
+# Run from project root in PowerShell to check Kubernetes connection.
+kubectl version --client
+kubectl config current-context
+kubectl get deployments -A
+kubectl get pods -n default

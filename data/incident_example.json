@@ -1,0 +1,20 @@
+{
+  "incident_id": "incident-2026-001",
+  "metrics": {
+    "cpu_usage": 88,
+    "memory_usage": 82,
+    "latency_ms": 850,
+    "error_rate": 0.08,
+    "request_rate": 58,
+    "restart_count": 0,
+    "disk_usage": 65,
+    "network_error_rate": 0.01
+  },
+  "log_messages": [
+    "HTTP 500 internal server error on /checkout",
+    "connection timeout to inventory-service"
+  ],
+  "deployment_events": [
+    "new version deployment started 4 minutes before incident"
+  ]
+}

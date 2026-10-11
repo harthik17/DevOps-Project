@@ -1,0 +1,5 @@
+# PowerShell smoke tests
+Invoke-RestMethod http://127.0.0.1:8000/api/orchestration/health
+Invoke-RestMethod http://127.0.0.1:8000/api/orchestration/metrics/live | ConvertTo-Json -Depth 8
+# POST body through Swagger is easiest:
+# http://127.0.0.1:8000/docs -> POST /api/orchestration/analyze

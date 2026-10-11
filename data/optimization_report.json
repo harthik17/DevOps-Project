@@ -1,0 +1,53 @@
+{
+  "incident_id": "resource-test-001",
+  "generated_at_utc": "2026-10-11T15:07:32.646640+00:00",
+  "method": "Conservative rule-based recommendations; not an autonomous controller.",
+  "observed_metrics": {
+    "cpu_usage_percent": 86,
+    "memory_usage_percent": 83,
+    "latency_p95_ms": 700,
+    "request_rate_rps": 55,
+    "error_ratio": 0.02,
+    "restart_count": 0,
+    "sustained_minutes": 10
+  },
+  "recommendations": [
+    {
+      "action": "scale_out",
+      "priority": "high",
+      "current": {
+        "replicas": 2
+      },
+      "recommended": {
+        "replicas": 3
+      },
+      "reason": "CPU is 86.0% for 10 minutes and error ratio is 2.0%.",
+      "guardrails": [
+        "Check node capacity and pod scheduling before scaling.",
+        "Confirm the bottleneck is not a downstream dependency."
+      ]
+    },
+    {
+      "action": "review_cpu_request",
+      "priority": "medium",
+      "current": {
+        "cpu_request_millicores": 500
+      },
+      "recommended": {
+        "cpu_request_millicores": 650
+      },
+      "reason": "CPU usage is 86.0%; the configured request may not reflect observed demand.",
+      "guardrails": [
+        "Validate CPU limits, throttling, and node capacity.",
+        "Requests affect scheduling; test changes in staging."
+      ]
+    }
+  ],
+  "next_steps": [
+    "Verify the observation window and units.",
+    "Compare against baseline, latency SLOs, error budget, and cluster capacity.",
+    "Review recommendations with an operator and test in staging.",
+    "Apply changes manually only after approval, then monitor impact."
+  ],
+  "safety_note": "This tool only writes a JSON report. It does not change Kubernetes, cloud resources, or billing settings."
+}

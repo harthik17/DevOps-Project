@@ -1,0 +1,39 @@
+{
+  "estimated_failure_risk": 0.613012,
+  "input_features": {
+    "cpu_usage": 90.0,
+    "memory_usage": 88.0,
+    "latency_ms": 1000.0,
+    "error_rate": 0.15,
+    "request_rate": 25.0
+  },
+  "shap_base_value": 0.500873121062147,
+  "feature_contributions": [
+    {
+      "feature": "request_rate",
+      "value": 25.0,
+      "shap_value": -0.16860976251288898
+    },
+    {
+      "feature": "cpu_usage",
+      "value": 90.0,
+      "shap_value": 0.14251226307172363
+    },
+    {
+      "feature": "memory_usage",
+      "value": 88.0,
+      "shap_value": 0.12497324884907325
+    },
+    {
+      "feature": "latency_ms",
+      "value": 1000.0,
+      "shap_value": 0.03937652168659728
+    },
+    {
+      "feature": "error_rate",
+      "value": 0.15,
+      "shap_value": -0.02611376062795478
+    }
+  ],
+  "note": "Illustrative explanation for a demo input. SHAP explains this model's output; it does not prove causation."
+}

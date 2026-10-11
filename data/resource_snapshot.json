@@ -1,0 +1,21 @@
+{
+  "incident_id": "resource-test-001",
+  "current": {
+    "replicas": 2,
+    "cpu_request_millicores": 500,
+    "memory_request_mib": 512
+  },
+  "target": {
+    "min_replicas": 2,
+    "max_replicas": 6
+  },
+  "metrics": {
+    "cpu_usage_percent": 86,
+    "memory_usage_percent": 83,
+    "latency_p95_ms": 700,
+    "request_rate_rps": 55,
+    "error_ratio": 0.02,
+    "restart_count": 0,
+    "sustained_minutes": 10
+  }
+}

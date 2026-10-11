@@ -1,0 +1,102 @@
+{
+  "incident_id": "incident-2026-001",
+  "generated_at_utc": "2026-10-11T15:07:08.206231+00:00",
+  "method": "Explainable rule-based scoring; scores are relative ranks, not probabilities or proof of causality.",
+  "metrics_used": {
+    "cpu_usage": 88,
+    "memory_usage": 82,
+    "latency_ms": 850,
+    "error_rate": 0.08,
+    "request_rate": 58,
+    "restart_count": 0,
+    "disk_usage": 65,
+    "network_error_rate": 0.01
+  },
+  "ranked_root_causes": [
+    {
+      "cause": "Application errors or failed dependency",
+      "score": 5,
+      "relative_score_percent": 100,
+      "evidence": [
+        "Error rate is elevated (0.080).",
+        "A log indicates an exception or server-side error."
+      ],
+      "recommended_actions": [
+        "Group errors by type and endpoint; check downstream service availability.",
+        "Inspect the stack trace and correlate errors with the affected endpoint and dependency."
+      ]
+    },
+    {
+      "cause": "CPU saturation",
+      "score": 3,
+      "relative_score_percent": 60,
+      "evidence": [
+        "CPU usage is high (88.0%)."
+      ],
+      "recommended_actions": [
+        "Inspect CPU-heavy processes and recent workload changes; scale replicas if demand is sustained."
+      ]
+    },
+    {
+      "cause": "Network or service-connectivity issue",
+      "score": 3,
+      "relative_score_percent": 60,
+      "evidence": [
+        "A log indicates a connection, upstream, timeout, or DNS failure."
+      ],
+      "recommended_actions": [
+        "Check DNS, service endpoints, network policies, timeouts, and dependency connectivity."
+      ]
+    },
+    {
+      "cause": "Recent deployment regression",
+      "score": 3,
+      "relative_score_percent": 60,
+      "evidence": [
+        "A deployment or release event was reported near the incident."
+      ],
+      "recommended_actions": [
+        "Compare error and latency metrics before/after the release; consider rollback if impact aligns."
+      ]
+    },
+    {
+      "cause": "Traffic spike / capacity pressure",
+      "score": 3,
+      "relative_score_percent": 60,
+      "evidence": [
+        "Request rate is high (58.0 requests/s) alongside elevated CPU or latency."
+      ],
+      "recommended_actions": [
+        "Check traffic patterns, rate limits, autoscaling status, and replica capacity."
+      ]
+    },
+    {
+      "cause": "Application latency regression",
+      "score": 2,
+      "relative_score_percent": 40,
+      "evidence": [
+        "Latency is elevated (850 ms)."
+      ],
+      "recommended_actions": [
+        "Break latency down by endpoint and dependency before changing capacity."
+      ]
+    },
+    {
+      "cause": "Memory pressure / possible leak",
+      "score": 2,
+      "relative_score_percent": 40,
+      "evidence": [
+        "Memory usage is elevated (82.0%)."
+      ],
+      "recommended_actions": [
+        "Compare memory usage over time and inspect process or container memory metrics."
+      ]
+    }
+  ],
+  "summary": "Top candidate: Application errors or failed dependency (relative score 100%).",
+  "limitations": [
+    "This is a heuristic triage aid, not proof of causality.",
+    "Validate findings against timestamps, traces, deployment history, and service-specific baselines.",
+    "Ensure metric units are consistent before using this in an evaluation or production workflow."
+  ]
+}

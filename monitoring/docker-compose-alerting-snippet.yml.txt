@@ -1,0 +1,16 @@
+# Merge into your existing docker-compose.yml after reviewing service names.
+# Prometheus volumes:
+#   - ./monitoring/prometheus-alerting.yml:/etc/prometheus/prometheus.yml:ro
+#   - ./monitoring/aiops_alerts.yml:/etc/prometheus/aiops_alerts.yml:ro
+#
+# alertmanager:
+#   image: prom/alertmanager:latest
+#   container_name: aiops-alertmanager
+#   ports:
+#     - "9093:9093"
+#   volumes:
+      - ./monitoring/aiops_alerts.yml:/etc/prometheus/aiops_alerts.yml:ro
+#     - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+#   command: ["--config.file=/etc/alertmanager/alertmanager.yml"]
+#   extra_hosts:
+#     - "host.docker.internal:host-gateway"

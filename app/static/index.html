@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIOps Observability & Predictive Remediation Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body class="dark-theme">
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <div class="brand-logo">
+        <span class="logo-icon">⚡</span>
+        <div class="brand-text">
+          <span class="brand-title">AIOps Enterprise Platform</span>
+          <span class="brand-subtitle">Predictive Observability & Guarded Remediation</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="nav-center">
+      <div class="synthetic-badge" title="Telemetry incorporates synthetic workload simulation for demo testing">
+        <span class="pulse-dot"></span>
+        <span>Environment: <strong>Demo / Synthetic Telemetry</strong></span>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <div class="status-pill active" id="system-status-pill">
+        <span class="status-indicator"></span>
+        <span id="system-status-text">System: Healthy</span>
+      </div>
+      <button class="btn btn-outline btn-sm" id="refresh-all-btn" title="Refresh all telemetry">
+        <span class="btn-icon">↻</span> Refresh
+      </button>
+      <a href="/docs" target="_blank" class="btn btn-secondary btn-sm" title="Open Swagger Documentation">
+        <span>Swagger API</span> ↗
+      </a>
+      <button class="theme-toggle" id="theme-toggle-btn" title="Toggle Light/Dark Theme">🌙</button>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <!-- Navigation Sidebar -->
+    <aside class="sidebar">
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="overview">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Overview & Metrics</span>
+        </button>
+        <button class="nav-item" data-tab="prediction">
+          <span class="nav-icon">🤖</span>
+          <span class="nav-label">Failure Prediction & SHAP</span>
+        </button>
+        <button class="nav-item" data-tab="rca">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-label">Root Cause Analysis</span>
+        </button>
+        <button class="nav-item" data-tab="optimizer">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Resource Optimizer</span>
+        </button>
+        <button class="nav-item" data-tab="alerts">
+          <span class="nav-icon">🚨</span>
+          <span class="nav-label">Prometheus Alerts</span>
+          <span class="badge-count" id="alerts-count">0</span>
+        </button>
+        <button class="nav-item" data-tab="remediation">
+          <span class="nav-icon">🛡️</span>
+          <span class="nav-label">K8s Remediation (Dry-Run)</span>
+        </button>
+        <button class="nav-item" data-tab="traffic">
+          <span class="nav-icon">🧪</span>
+          <span class="nav-label">Chaos & Traffic Generator</span>
+        </button>
+        <button class="nav-item" data-tab="architecture">
+          <span class="nav-icon">📘</span>
+          <span class="nav-label">Architecture & Info</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="safeguard-status">
+          <span class="shield-icon">🔒</span>
+          <div class="safeguard-info">
+            <span class="safeguard-title">K8s Execution Safeguard</span>
+            <span class="safeguard-desc">Dry-Run Only (Guarded)</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+      <!-- ================= TAB 1: OVERVIEW & METRICS ================= -->
+      <section class="tab-pane active" id="pane-overview">
+        <div class="pane-header">
+          <div>
+            <h2>Service Telemetry & SRE Overview</h2>
+            <p class="text-muted">Real-time health, request volume, p95 latency, error rates, and live Prometheus telemetry.</p>
+          </div>
+          <div class="pane-actions">
+            <span class="last-updated" id="metrics-updated-time">Updated: Just now</span>
+          </div>
+        </div>
+
+        <!-- Metric Stat Cards -->
+        <div class="metrics-grid">
+          <div class="card stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Target Status</span>
+              <span class="stat-icon text-success">🟢</span>
+            </div>
+            <div class="stat-value text-success" id="card-target-status">UP</div>
+            <div class="stat-meta">Scraping: <code>aiops-app:8000</code></div>
+          </div>
+
+          <div class="card stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Request Throughput</span>
+              <span class="stat-icon">📈</span>
+            </div>
+            <div class="stat-value" id="card-request-rate">--</div>
+            <div class="stat-meta">5m rolling avg (req/sec)</div>
+          </div>
+
+          <div class="card stat-card">
+            <div class="stat-header">
+              <span class="stat-title">p95 Latency</span>
+              <span class="stat-icon">⏱️</span>
+            </div>
+            <div class="stat-value" id="card-latency">--</div>
+            <div class="stat-meta">Target threshold: &lt; 500 ms</div>
+          </div>
+
+          <div class="card stat-card">
+            <div class="stat-header">
+              <span class="stat-title">HTTP 5xx Error Rate</span>
+              <span class="stat-icon text-warning">⚠️</span>
+            </div>
+            <div class="stat-value" id="card-error-rate">--</div>
+            <div class="stat-meta">Errors/sec (last 5 min)</div>
+          </div>
+
+          <div class="card stat-card highlight-card">
+            <div class="stat-header">
+              <span class="stat-title">Model Failure Risk</span>
+              <span class="stat-icon">🎯</span>
+            </div>
+            <div class="stat-value" id="card-failure-risk">Low</div>
+            <div class="stat-meta" id="card-failure-meta">Estimated Risk: --</div>
+          </div>
+        </div>
+
+        <!-- Charts and Telemetry Breakdown -->
+        <div class="grid-2-col">
+          <div class="card">
+            <div class="card-header">
+              <h3>Live Telemetry Timeline</h3>
+              <span class="badge badge-info">15s Scrape Window</span>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="telemetryChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Prometheus Scraping Details</h3>
+              <button class="btn btn-sm btn-outline" id="btn-refresh-prom-details">Refresh</button>
+            </div>
+            <div class="card-body">
+              <div class="telemetry-table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Metric Name</th>
+                      <th>Observed Value</th>
+                      <th>PromQL Query Expression</th>
+                    </tr>
+                  </thead>
+                  <tbody id="telemetry-table-body">
+                    <tr><td colspan="3" class="text-center text-muted">Loading live metrics...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 2: AI FAILURE PREDICTION & SHAP ================= -->
+      <section class="tab-pane" id="pane-prediction">
+        <div class="pane-header">
+          <div>
+            <h2>Predictive Failure Risk & SHAP Explainability</h2>
+            <p class="text-muted">Random Forest Classifier pipeline predicting failure risk within 5 minutes, explained via SHAP TreeExplainer.</p>
+          </div>
+          <div class="pane-actions">
+            <span class="badge badge-primary">Model: RandomForest (ROC-AUC 0.751)</span>
+          </div>
+        </div>
+
+        <div class="grid-2-col">
+          <!-- Input Form Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Feature Risk Input Vector</h3>
+              <button class="btn btn-sm btn-outline" id="btn-populate-live-features">Populate from Live Telemetry</button>
+            </div>
+            <div class="card-body">
+              <form id="prediction-form" class="form-grid">
+                <div class="form-group">
+                  <label for="input-cpu">CPU Usage (%)</label>
+                  <input type="number" id="input-cpu" class="form-control" value="85" min="0" max="100" step="1">
+                  <small class="form-text">Synthetic gauge or host CPU</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="input-mem">Memory Usage (%)</label>
+                  <input type="number" id="input-mem" class="form-control" value="80" min="0" max="100" step="1">
+                  <small class="form-text">Synthetic memory pressure</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="input-latency">Latency (ms)</label>
+                  <input type="number" id="input-latency" class="form-control" value="450" min="0" max="10000" step="10">
+                  <small class="form-text">p95 request duration in ms</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="input-error-rate">Error Rate (errors/s)</label>
+                  <input type="number" id="input-error-rate" class="form-control" value="0.08" min="0" max="100" step="0.01">
+                  <small class="form-text">5xx error frequency</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="input-request-rate">Request Throughput (req/s)</label>
+                  <input type="number" id="input-request-rate" class="form-control" value="25" min="0" max="1000" step="1">
+                  <small class="form-text">Total request throughput</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="input-threshold">Decision Threshold</label>
+                  <input type="number" id="input-threshold" class="form-control" value="0.5" min="0.1" max="0.9" step="0.05">
+                  <small class="form-text">Default threshold = 0.50</small>
+                </div>
+
+                <div class="form-actions col-span-2">
+                  <button type="submit" class="btn btn-primary" id="btn-run-prediction">
+                    <span>⚡ Run Model Risk Prediction</span>
+                  </button>
+                  <button type="button" class="btn btn-secondary" id="btn-run-explain">
+                    <span>🔍 Calculate SHAP Feature Attributions</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Prediction & SHAP Output Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Model Prediction & Driver Attribution</h3>
+            </div>
+            <div class="card-body">
+              <div id="prediction-result-container" class="result-placeholder">
+                <div class="placeholder-icon">🎯</div>
+                <h4>Submit or Click "Run Model Risk Prediction"</h4>
+                <p class="text-muted">Evaluates Random Forest classifier decision boundaries and extracts SHAP TreeExplainer feature attributions.</p>
+              </div>
+
+              <!-- Real Results Display -->
+              <div id="prediction-details" style="display: none;">
+                <div class="risk-gauge-container">
+                  <div class="risk-gauge-val" id="res-risk-percentage">0%</div>
+                  <div class="risk-label" id="res-risk-badge">Nominal</div>
+                </div>
+
+                <p class="res-interpretation" id="res-interpretation-text"></p>
+
+                <div class="shap-breakdown-section">
+                  <h4>SHAP Feature Importance (Impact on Risk):</h4>
+                  <div id="shap-bars-container" class="shap-bars-list"></div>
+                </div>
+
+                <div class="notice-box mt-3">
+                  <small><strong>Scientific Note:</strong> SHAP feature attributions explain the mathematical model's output boundaries; they do not prove physical causal relationships.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: ROOT CAUSE ANALYSIS (RCA) ================= -->
+      <section class="tab-pane" id="pane-rca">
+        <div class="pane-header">
+          <div>
+            <h2>Explainable Root Cause Analysis (RCA)</h2>
+            <p class="text-muted">Rule-based multi-factor triage engine ranking plausible root causes from metric anomalies, logs, and deployment events.</p>
+          </div>
+          <div class="pane-actions">
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline rca-preset-btn" data-preset="error">Preset: Downstream Error</button>
+              <button class="btn btn-sm btn-outline rca-preset-btn" data-preset="cpu">Preset: CPU Saturation</button>
+              <button class="btn btn-sm btn-outline rca-preset-btn" data-preset="traffic">Preset: Traffic Spike</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2-col">
+          <div class="card">
+            <div class="card-header">
+              <h3>Incident Triage Input</h3>
+            </div>
+            <div class="card-body">
+              <form id="rca-form">
+                <div class="form-group">
+                  <label for="rca-logs">Observed Log Messages (one per line):</label>
+                  <textarea id="rca-logs" class="form-control mono" rows="4" placeholder="ERROR: Downstream payment API timeout&#10;WARNING: Connection pool exhausted">ERROR: Connection timed out to downstream database
+WARNING: Failed to process request in worker thread</textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="rca-events">Recent Deployment / Cluster Events:</label>
+                  <textarea id="rca-events" class="form-control mono" rows="2" placeholder="deployment rolled out v1.2">deployment/aiops-app rollout updated image to v0.1.0</textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-2" id="btn-run-rca">
+                  <span>🔬 Run Root Cause Diagnostics</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Ranked Diagnostic Findings</h3>
+            </div>
+            <div class="card-body">
+              <div id="rca-results-container">
+                <div class="result-placeholder">
+                  <div class="placeholder-icon">🔍</div>
+                  <h4>No Active RCA Triage Executed</h4>
+                  <p class="text-muted">Click "Run Root Cause Diagnostics" to evaluate candidate causes and evidence.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 4: RESOURCE OPTIMIZER ================= -->
+      <section class="tab-pane" id="pane-optimizer">
+        <div class="pane-header">
+          <div>
+            <h2>Cloud Resource Optimization & Rightsizing</h2>
+            <p class="text-muted">Intelligent, conservative rightsizing and replica recommendation engine incorporating capacity guardrails.</p>
+          </div>
+        </div>
+
+        <div class="grid-2-col">
+          <div class="card">
+            <div class="card-header">
+              <h3>Current Workload Snapshot</h3>
+            </div>
+            <div class="card-body">
+              <form id="optimizer-form" class="form-grid">
+                <div class="form-group">
+                  <label for="opt-replicas">Current Replicas</label>
+                  <input type="number" id="opt-replicas" class="form-control" value="2" min="1" max="20">
+                </div>
+                <div class="form-group">
+                  <label for="opt-cpu-req">Current CPU Request (m)</label>
+                  <input type="number" id="opt-cpu-req" class="form-control" value="500" min="100" max="4000" step="50">
+                </div>
+                <div class="form-group">
+                  <label for="opt-cpu-pct">Observed CPU Usage (%)</label>
+                  <input type="number" id="opt-cpu-pct" class="form-control" value="86" min="0" max="100">
+                </div>
+                <div class="form-group">
+                  <label for="opt-mem-pct">Observed Memory Usage (%)</label>
+                  <input type="number" id="opt-mem-pct" class="form-control" value="83" min="0" max="100">
+                </div>
+                <div class="form-group">
+                  <label for="opt-sustained">Sustained Duration (min)</label>
+                  <input type="number" id="opt-sustained" class="form-control" value="10" min="1" max="120">
+                </div>
+                <div class="form-group">
+                  <label for="opt-error-ratio">Error Ratio (%)</label>
+                  <input type="number" id="opt-error-ratio" class="form-control" value="2" min="0" max="100">
+                </div>
+
+                <div class="form-actions col-span-2">
+                  <button type="submit" class="btn btn-primary" id="btn-run-optimizer">
+                    <span>⚡ Generate Rightsizing Recommendations</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Recommended Scaling & Actions</h3>
+            </div>
+            <div class="card-body" id="optimizer-results-container">
+              <div class="result-placeholder">
+                <div class="placeholder-icon">⚙️</div>
+                <h4>Generate Rightsizing Suggestions</h4>
+                <p class="text-muted">Calculates safe replica scaling and CPU request bounds without making automated production changes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 5: PROMETHEUS ALERTS ================= -->
+      <section class="tab-pane" id="pane-alerts">
+        <div class="pane-header">
+          <div>
+            <h2>Prometheus Alerting Rules & Firing Status</h2>
+            <p class="text-muted">Active alert monitoring evaluated from <code>/etc/prometheus/aiops_alerts.yml</code>.</p>
+          </div>
+          <div class="pane-actions">
+            <button class="btn btn-sm btn-outline" id="btn-refresh-alerts">↻ Poll Alert Status</button>
+            <a href="http://localhost:9090/alerts" target="_blank" class="btn btn-sm btn-secondary">Open Prometheus Alerts ↗</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Registered Application Alert Rules</h3>
+          </div>
+          <div class="card-body">
+            <div class="telemetry-table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Alert Name</th>
+                    <th>Current State</th>
+                    <th>Severity</th>
+                    <th>Expression / Threshold</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody id="alerts-table-body">
+                  <tr><td colspan="5" class="text-center text-muted">Polling alert rules...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 6: KUBERNETES REMEDIATION ================= -->
+      <section class="tab-pane" id="pane-remediation">
+        <div class="pane-header">
+          <div>
+            <h2>Guarded Kubernetes Remediation (Dry-Run Enforced)</h2>
+            <p class="text-muted">Prepares, validates, and simulates allowable Kubernetes commands without disruptive automated execution.</p>
+          </div>
+          <div class="pane-actions">
+            <span class="badge badge-success">Safeguard: dry_run=true</span>
+          </div>
+        </div>
+
+        <div class="grid-2-col">
+          <div class="card">
+            <div class="card-header">
+              <h3>Plan Remediation Action</h3>
+            </div>
+            <div class="card-body">
+              <form id="remediation-form">
+                <div class="form-group">
+                  <label for="rem-action">Allowlisted Action:</label>
+                  <select id="rem-action" class="form-control">
+                    <option value="scale_deployment">scale_deployment (Scale Pod Replicas)</option>
+                    <option value="restart_deployment">restart_deployment (Rolling Restart)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="rem-deployment">Target Deployment:</label>
+                  <input type="text" id="rem-deployment" class="form-control" value="aiops-app" readonly>
+                  <small class="form-text">Restricted by allowlist to: aiops-app</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="rem-namespace">Target Namespace:</label>
+                  <input type="text" id="rem-namespace" class="form-control" value="default" readonly>
+                  <small class="form-text">Restricted by allowlist to: default</small>
+                </div>
+
+                <div class="form-group" id="group-rem-replicas">
+                  <label for="rem-replicas">Desired Replicas (1–10):</label>
+                  <input type="number" id="rem-replicas" class="form-control" value="3" min="1" max="10">
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btn-plan-remediation">
+                  <span>🛡️ Generate Guarded Dry-Run Preview</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Generated Remediation Preview</h3>
+            </div>
+            <div class="card-body" id="remediation-results-container">
+              <div class="result-placeholder">
+                <div class="placeholder-icon">🛡️</div>
+                <h4>Plan an Action to View Command Preview</h4>
+                <p class="text-muted">Generates audited kubectl commands. The safe dry-run policy prevents automatic modification of cluster resources.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 7: CHAOS & TRAFFIC GENERATOR ================= -->
+      <section class="tab-pane" id="pane-traffic">
+        <div class="pane-header">
+          <div>
+            <h2>Chaos Testing & Traffic Injection Controls</h2>
+            <p class="text-muted">Trigger controlled operational anomalies directly into the running FastAPI application to observe metrics and alerts.</p>
+          </div>
+        </div>
+
+        <div class="grid-2-col">
+          <div class="card">
+            <div class="card-header">
+              <h3>Controlled Fault Injection Triggers</h3>
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-3">All triggers execute against local safe endpoints designed specifically for testing Prometheus scraping and alert evaluation.</p>
+
+              <div class="chaos-buttons-grid">
+                <div class="chaos-action-card">
+                  <div class="chaos-info">
+                    <h4>Trigger 500 Error Burst</h4>
+                    <p>Sends 5 intentional HTTP 500 errors to <code>/demo/error</code> to test the <code>AIOpsDemoErrorCounterIncreasing</code> alert.</p>
+                  </div>
+                  <button class="btn btn-danger" id="btn-trigger-errors">⚡ Send 5 Errors</button>
+                </div>
+
+                <div class="chaos-action-card">
+                  <div class="chaos-info">
+                    <h4>Simulate High Latency</h4>
+                    <p>Invokes <code>/demo/slow</code> with an artificial 400ms–1200ms delay to stimulate p95 latency histograms.</p>
+                  </div>
+                  <button class="btn btn-warning" id="btn-trigger-latency">⏱️ Send 3 Slow Requests</button>
+                </div>
+
+                <div class="chaos-action-card">
+                  <div class="chaos-info">
+                    <h4>Inject Synthetic High Load (85%)</h4>
+                    <p>Sets synthetic gauge <code>aiops_simulated_load_level</code> to 85 to trigger load warning rules.</p>
+                  </div>
+                  <button class="btn btn-warning" id="btn-set-load-high">🔥 Set Load to 85%</button>
+                </div>
+
+                <div class="chaos-action-card">
+                  <div class="chaos-info">
+                    <h4>Reset Synthetic Load (15%)</h4>
+                    <p>Resets synthetic gauges back to baseline nominal values.</p>
+                  </div>
+                  <button class="btn btn-success" id="btn-reset-load">🔄 Reset Load to 15%</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Execution Audit Log</h3>
+              <button class="btn btn-sm btn-outline" id="btn-clear-traffic-log">Clear</button>
+            </div>
+            <div class="card-body">
+              <div class="console-box" id="traffic-console-log">
+                <div class="log-entry system">[System Ready] Interactive traffic generator ready.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 8: ARCHITECTURE & PROJECT INFO ================= -->
+      <section class="tab-pane" id="pane-architecture">
+        <div class="pane-header">
+          <div>
+            <h2>AIOps Capstone Architecture & Specifications</h2>
+            <p class="text-muted">Technical overview, implemented capabilities (Modules 1–12), technology stack, and engineering constraints.</p>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-header">
+            <h3>System Pipeline & Information Flow</h3>
+          </div>
+          <div class="card-body">
+            <div class="arch-flow">
+              <div class="flow-step">
+                <div class="flow-icon">⚡</div>
+                <div class="flow-name">1. Workload Layer</div>
+                <div class="flow-desc">FastAPI Service instrumented with Prometheus client metrics, histograms & middleware.</div>
+              </div>
+              <div class="flow-arrow">➔</div>
+              <div class="flow-step">
+                <div class="flow-icon">📊</div>
+                <div class="flow-name">2. Observability</div>
+                <div class="flow-desc">Prometheus scraping every 15s, Grafana dashboards, Alertmanager rule evaluations.</div>
+              </div>
+              <div class="flow-arrow">➔</div>
+              <div class="flow-step">
+                <div class="flow-icon">🤖</div>
+                <div class="flow-name">3. AI/ML Intelligence</div>
+                <div class="flow-desc">Random Forest classifier (ROC-AUC 0.751), SHAP TreeExplainer attributions, Heuristic RCA.</div>
+              </div>
+              <div class="flow-arrow">➔</div>
+              <div class="flow-step">
+                <div class="flow-icon">🛡️</div>
+                <div class="flow-name">4. Guarded Action</div>
+                <div class="flow-desc">Conservative rightsizing & dry-run Kubernetes scaling previews (executed: false).</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2-col">
+          <div class="card">
+            <div class="card-header">
+              <h3>Technical Specifications & Stack</h3>
+            </div>
+            <div class="card-body">
+              <ul class="specs-list">
+                <li><strong>Backend Framework:</strong> FastAPI 0.115+, Uvicorn ASGI server</li>
+                <li><strong>Observability:</strong> Prometheus 3.0+, Grafana latest, custom Alert rules</li>
+                <li><strong>AI & Machine Learning:</strong> Scikit-Learn Random Forest Pipeline, Joblib serialization</li>
+                <li><strong>Model Explainability:</strong> SHAP (SHapley Additive exPlanations) TreeExplainer</li>
+                <li><strong>Containerization:</strong> Docker, Docker Compose multi-service network</li>
+                <li><strong>Orchestration:</strong> Kubernetes (Minikube compatible) with dry-run previews</li>
+                <li><strong>Public Delivery:</strong> Cloudflare Tunnel (HTTP/2 edge proxy with TLS)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Engineering Truths & Safety Boundaries</h3>
+            </div>
+            <div class="card-body">
+              <div class="notice-box mb-3">
+                <strong>Synthetic Data Transparency:</strong> Model evaluation metrics (ROC-AUC 0.751) reflect synthetic telemetry designed for pipeline demonstration. They must not be cited as real-world production accuracy.
+              </div>
+              <div class="notice-box mb-3">
+                <strong>Heuristic vs. Causal Reasoning:</strong> The Root Cause Analysis (RCA) engine implements transparent symptom scoring; it provides triage guidance rather than physical causal proof.
+              </div>
+              <div class="notice-box">
+                <strong>Production Safety:</strong> Kubernetes automated scaling and rolling restarts are locked in dry-run mode by default (`executed: false`). Production execution requires strict opt-in authorization and RBAC auditing.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

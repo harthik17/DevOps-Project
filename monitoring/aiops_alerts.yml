@@ -1,0 +1,50 @@
+groups:
+  - name: aiops-application-alerts
+    rules:
+      - alert: AIOpsTargetDown
+        expr: up{job="aiops-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "AIOps application target is down"
+          description: "Prometheus cannot scrape {{ $labels.instance }} for at least 1 minute."
+      - alert: AIOpsHighRequestErrorRate
+        expr: |
+          (
+            sum(rate(aiops_http_requests_total{job="aiops-app",status=~"5.."}[5m]))
+            /
+            clamp_min(sum(rate(aiops_http_requests_total{job="aiops-app"}[5m])), 0.001)
+          ) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "AIOps application 5xx error ratio is high"
+          description: "The 5xx ratio is above 5% for 2 minutes."
+      - alert: AIOpsHighP95Latency
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le) (rate(aiops_http_request_duration_seconds_bucket{job="aiops-app"}[5m]))
+          ) > 0.5
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "AIOps p95 latency is high"
+          description: "p95 latency is above 500 ms for 3 minutes."
+      - alert: AIOpsDemoErrorCounterIncreasing
+        expr: increase(aiops_demo_errors_total{job="aiops-app"}[5m]) >= 3
+        labels:
+          severity: warning
+        annotations:
+          summary: "Multiple demo errors observed"
+          description: "At least 3 demo errors were recorded in the last 5 minutes."
+      - alert: AIOpsSimulatedLoadHigh
+        expr: aiops_simulated_load_level{job="aiops-app"} >= 85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Simulated demo load is high"
+          description: "This is a synthetic gauge, not actual host CPU usage."

@@ -1,0 +1,3 @@
+# Add after app = FastAPI(...):
+from app.orchestration import router as orchestration_router
+app.include_router(orchestration_router)

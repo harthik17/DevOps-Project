@@ -1,0 +1,18 @@
+# Module 10 integration snippet for app/main.py
+# Add after your existing `app = FastAPI(...)` declaration:
+from app.remediation import router as remediation_router
+app.include_router(remediation_router)
+
+# Install dependency if needed:
+# python -m pip install fastapi uvicorn pydantic
+#
+# Dry-run example:
+# POST http://127.0.0.1:8000/api/remediation/plan
+# JSON:
+# {
+#   "action": "scale_deployment",
+#   "deployment": "aiops-app",
+#   "namespace": "default",
+#   "replicas": 2,
+#   "dry_run": true
+# }

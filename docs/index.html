@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIOps Platform — Explainable AI & Cloud-Native Remediation | N Harthik Reddy</title>
+  <meta name="description" content="An end-to-end cloud-native AIOps platform that unifies real-time application telemetry, machine learning failure risk prediction, SHAP-based interpretability, and guarded Kubernetes remediation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="glow-backdrop"></div>
+
+  <!-- Top Navigation -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="#" class="brand">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-info">
+          <span class="brand-title">AIOps Enterprise</span>
+          <span class="brand-sub">Predictive Observability & Remediation</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#simulator">Live Simulator</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#modules">Modules 1–12</a></li>
+        <li><a href="#ml-explainability">ML & SHAP</a></li>
+        <li><a href="#tech-stack">Tech Stack</a></li>
+        <li><a href="#api-reference">APIs</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Theme">🌙</button>
+        <a href="https://github.com/harthik17/DevOps-Project" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+          <span>GitHub</span> ↗
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero" id="overview">
+    <div class="container">
+      <div class="hero-pill">
+        <span class="pulse-dot"></span>
+        <span>Verified Capstone Architecture • 22/22 Automated Tests Passing</span>
+      </div>
+
+      <h1>
+        Explainable AI-Driven <span class="gradient-text">AIOps Framework</span><br>
+        For Cloud-Native Reliability
+      </h1>
+
+      <p class="hero-subtitle">
+        Bridging high-scale cloud telemetry and actionable site reliability engineering. Combining Prometheus real-time monitoring, Scikit-Learn failure prediction (ROC-AUC 0.751), SHAP-based explainability, automated root-cause analysis, and guarded dry-run Kubernetes remediation into a single pane of glass.
+      </p>
+
+      <div class="hero-cta">
+        <a href="#simulator" class="btn btn-primary">
+          <span>⚡ Try Interactive Simulator</span>
+        </a>
+        <a href="https://github.com/harthik17/DevOps-Project" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+          <span>📂 Browse GitHub Source</span>
+        </a>
+        <a href="#architecture" class="btn btn-secondary">
+          <span>📘 System Architecture</span>
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-value">12 / 12</div>
+          <div class="stat-label">Core Modules Integrated</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">0.751</div>
+          <div class="stat-label">ROC-AUC Failure Detection</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">5 Rules</div>
+          <div class="stat-label">Prometheus Alert Matrix</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">Guarded</div>
+          <div class="stat-label">Dry-Run K8s Safety Plan</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Live Simulator Section -->
+  <section class="section" id="simulator">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Interactive Client-Side Demonstration</span>
+        <h2 class="section-title">Telemetry & Failure Risk Simulator</h2>
+        <p class="section-desc">
+          Test the AIOps inference engine directly in your browser. Adjust telemetry sliders or select a production scenario preset to observe real-time failure prediction, SHAP feature attributions, diagnostic root causes, and guarded Kubernetes remediation.
+        </p>
+      </div>
+
+      <div class="simulator-card">
+        <div class="sim-header">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Scenario Injection Presets</h3>
+            <span style="font-size: 0.8rem; color: var(--text-secondary);">Click a pre-configured production failure pattern:</span>
+          </div>
+          <div class="sim-modes">
+            <button class="sim-preset-btn active" data-preset="nominal">Nominal State</button>
+            <button class="sim-preset-btn" data-preset="memory">Memory Leak (OOM)</button>
+            <button class="sim-preset-btn" data-preset="cpu">CPU Saturation</button>
+            <button class="sim-preset-btn" data-preset="cascade">Cascading Outage</button>
+          </div>
+        </div>
+
+        <div class="sim-grid">
+          <!-- Controls Panel -->
+          <div class="controls-panel">
+            <div class="slider-group">
+              <div class="slider-label">
+                <span>CPU Usage</span>
+                <span class="slider-val" id="cpu-val">18.0%</span>
+              </div>
+              <input type="range" id="cpu-input" min="0" max="100" value="18" step="1">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <span>Memory Pressure</span>
+                <span class="slider-val" id="mem-val">24.0%</span>
+              </div>
+              <input type="range" id="mem-input" min="0" max="100" value="24" step="1">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <span>p95 Latency</span>
+                <span class="slider-val" id="lat-val">35 ms</span>
+              </div>
+              <input type="range" id="lat-input" min="10" max="2000" value="35" step="10">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <span>Error Rate</span>
+                <span class="slider-val" id="err-val">0.0%</span>
+              </div>
+              <input type="range" id="err-input" min="0" max="0.5" value="0.0" step="0.01">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-label">
+                <span>Request Rate</span>
+                <span class="slider-val" id="req-val">12 req/s</span>
+              </div>
+              <input type="range" id="req-input" min="1" max="150" value="12" step="1">
+            </div>
+          </div>
+
+          <!-- Dynamic Output Panel -->
+          <div class="output-panel">
+            <div class="risk-gauge-container">
+              <div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">Estimated Failure Risk</div>
+                <div class="risk-score" id="sim-risk-score">4%</div>
+              </div>
+              <div class="risk-badge nominal" id="sim-risk-badge">Nominal</div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px;">
+                SHAP Local Feature Attribution
+              </div>
+              <div class="shap-bars">
+                <div class="shap-item">
+                  <div class="shap-header"><span>CPU Usage</span><span id="shap-cpu-val">+0.12 (22%)</span></div>
+                  <div class="shap-bar-bg"><div class="shap-bar-fill" id="shap-cpu-fill" style="width: 22%; background: var(--accent-cyan);"></div></div>
+                </div>
+                <div class="shap-item">
+                  <div class="shap-header"><span>Memory Usage</span><span id="shap-mem-val">+0.15 (26%)</span></div>
+                  <div class="shap-bar-bg"><div class="shap-bar-fill" id="shap-mem-fill" style="width: 26%; background: var(--accent-indigo);"></div></div>
+                </div>
+                <div class="shap-item">
+                  <div class="shap-header"><span>Latency (p95)</span><span id="shap-lat-val">+0.08 (15%)</span></div>
+                  <div class="shap-bar-bg"><div class="shap-bar-fill" id="shap-lat-fill" style="width: 15%; background: var(--accent-amber);"></div></div>
+                </div>
+                <div class="shap-item">
+                  <div class="shap-header"><span>Error Rate</span><span id="shap-err-val">+0.05 (10%)</span></div>
+                  <div class="shap-bar-bg"><div class="shap-bar-fill" id="shap-err-fill" style="width: 10%; background: var(--accent-rose);"></div></div>
+                </div>
+                <div class="shap-item">
+                  <div class="shap-header"><span>Request Rate</span><span id="shap-req-val">+0.04 (8%)</span></div>
+                  <div class="shap-bar-bg"><div class="shap-bar-fill" id="shap-req-fill" style="width: 8%; background: var(--accent-emerald);"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rca-box">
+              <div class="rca-title">🔍 Root Cause Analysis</div>
+              <div id="sim-rca-diagnosis">System operating within nominal operational thresholds. No anomalies detected.</div>
+            </div>
+
+            <div class="remediation-box">
+              <div class="remediation-title">🛡️ Guarded Kubernetes Remediation (Dry-Run)</div>
+              <div id="sim-k8s-action">Action: No remediation required. Telemetry metrics healthy.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture Section -->
+  <section class="section" id="architecture">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">High-Level Blueprint</span>
+        <h2 class="section-title">Cloud-Native System Architecture</h2>
+        <p class="section-desc">
+          Designed for production reliability with zero black-box automations. Every alert, prediction, and remediation command travels through a deterministic verification pipeline with dry-run safeguards.
+        </p>
+      </div>
+
+      <div class="arch-grid">
+        <div class="arch-card">
+          <div class="arch-icon">🌐</div>
+          <h3 class="arch-title">1. Application Layer</h3>
+          <p class="arch-desc">
+            FastAPI microservice instrumented with Prometheus client middleware, custom latency histograms, request counters, and synthetic load triggers (`/demo/load`, `/demo/error`).
+          </p>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-icon">📊</div>
+          <h3 class="arch-title">2. Observability Stack</h3>
+          <p class="arch-desc">
+            Prometheus scraping every 15s, Alertmanager routing, and Grafana dashboard visualization. Custom rule definitions evaluate multi-level system degradation thresholds.
+          </p>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-icon">🧠</div>
+          <h3 class="arch-title">3. ML & SHAP Engine</h3>
+          <p class="arch-desc">
+            Scikit-Learn Random Forest model predicting impending failure risk from 5 time-series features. SHAP TreeExplainer outputs human-readable attribution waterfalls.
+          </p>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-icon">🔍</div>
+          <h3 class="arch-title">4. Root Cause Analysis</h3>
+          <p class="arch-desc">
+            Explainable rule-based diagnostic engine scoring failure candidate causes from metrics, logs, and deployment events to eliminate guesswork during active incidents.
+          </p>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-icon">⚙️</div>
+          <h3 class="arch-title">5. Resource Optimizer</h3>
+          <p class="arch-desc">
+            Conservative sizing engine recommending CPU/Memory request and limit rightsizing actions with strict min/max thresholds to balance cost efficiency and SLA safety.
+          </p>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-icon">🛡️</div>
+          <h3 class="arch-title">6. Guarded K8s Remediation</h3>
+          <p class="arch-desc">
+            Allowlisted remediation executor with dry-run protection (`executed: false`), enforcing namespace validation and requiring explicit human-in-the-loop approvals.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modules 1 to 12 Section -->
+  <section class="section" id="modules">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">End-to-End Implementation</span>
+        <h2 class="section-title">Modules 1 to 12 Breakdown</h2>
+        <p class="section-desc">
+          A comprehensive suite of interconnected engineering modules forming the complete AIOps lifecycle from raw metrics to automated diagnosis.
+        </p>
+      </div>
+
+      <div class="modules-grid">
+        <!-- Module 1 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 1</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">Cloud-Native Monitoring Base</h3>
+          <p class="module-desc">
+            FastAPI application instrumented with Prometheus client metrics, custom latency histograms, request counters, and synthetic error/load triggers.
+          </p>
+          <div class="module-meta">
+            <span>app/main.py</span>
+            <span>Prometheus metrics</span>
+          </div>
+        </div>
+
+        <!-- Module 2 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 2</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">Metrics Ingestion & Collector</h3>
+          <p class="module-desc">
+            Automated time-series metric collector and schema transformation pipeline ensuring feature consistency between live telemetry and ML datasets.
+          </p>
+          <div class="module-meta">
+            <span>data/collect_metrics.py</span>
+            <span>Transform pipeline</span>
+          </div>
+        </div>
+
+        <!-- Module 3 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 3</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">Predictive Failure Model</h3>
+          <p class="module-desc">
+            Supervised Random Forest classification pipeline predicting failure risk with cross-validation (ROC-AUC 0.751, Precision 0.455).
+          </p>
+          <div class="module-meta">
+            <span>ml/train_failure_model.py</span>
+            <span>ROC-AUC 0.751</span>
+          </div>
+        </div>
+
+        <!-- Module 4 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 4</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">Model Explainability (SHAP)</h3>
+          <p class="module-desc">
+            Local and global feature attribution using SHAP TreeExplainer, generating JSON summaries and waterfall visualization plots for SREs.
+          </p>
+          <div class="module-meta">
+            <span>ml/explain_failure.py</span>
+            <span>SHAP TreeExplainer</span>
+          </div>
+        </div>
+
+        <!-- Module 5 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 5</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">Root Cause Analysis (RCA)</h3>
+          <p class="module-desc">
+            Deterministic diagnostic engine evaluating multi-source telemetry, log signatures, and cluster events with confidence scoring.
+          </p>
+          <div class="module-meta">
+            <span>ml/root_cause_analysis.py</span>
+            <span>RCA candidate ranking</span>
+          </div>
+        </div>
+
+        <!-- Module 6 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 6</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">Cloud Resource Optimizer</h3>
+          <p class="module-desc">
+            Rightsizing engine analyzing CPU and memory utilization patterns, recommending deployment replica adjustments and container resource specifications.
+          </p>
+          <div class="module-meta">
+            <span>ml/resource_optimizer.py</span>
+            <span>Rightsizing rules</span>
+          </div>
+        </div>
+
+        <!-- Module 7 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 7</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">Unified Web Dashboard</h3>
+          <p class="module-desc">
+            Responsive single-pane-of-glass dashboard (`/dashboard`) featuring Chart.js telemetry charts, scenario simulation presets, and live alerts.
+          </p>
+          <div class="module-meta">
+            <span>app/static/index.html</span>
+            <span>Single-pane UI</span>
+          </div>
+        </div>
+
+        <!-- Module 8 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 8</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">Live Prometheus Telemetry</h3>
+          <p class="module-desc">
+            Direct PromQL client integration extracting real-time metrics, distinguishing available versus missing telemetry clearly.
+          </p>
+          <div class="module-meta">
+            <span>app/prometheus_client.py</span>
+            <span>PromQL integration</span>
+          </div>
+        </div>
+
+        <!-- Module 9 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 9</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">Multi-Rule Prometheus Alerting</h3>
+          <p class="module-desc">
+            Production alert matrix comprising 5 alerting rules with Alertmanager routing and webhook receivers (`/api/webhook/alerts`).
+          </p>
+          <div class="module-meta">
+            <span>monitoring/aiops_alerts.yml</span>
+            <span>5 Alert Rules</span>
+          </div>
+        </div>
+
+        <!-- Module 10 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 10</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">Guarded K8s Remediation</h3>
+          <p class="module-desc">
+            Allowlisted Kubernetes action planner (`/api/remediation/plan`) with default dry-run mode, safeguard validation, and audit logging.
+          </p>
+          <div class="module-meta">
+            <span>app/remediation.py</span>
+            <span>Dry-Run safety</span>
+          </div>
+        </div>
+
+        <!-- Module 11 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 11</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">End-to-End Orchestration</h3>
+          <p class="module-desc">
+            Unified orchestration pipeline (`/api/orchestration/analyze`) synthesizing live telemetry, severity assessment, and action command preview.
+          </p>
+          <div class="module-meta">
+            <span>app/orchestration.py</span>
+            <span>Incident triage</span>
+          </div>
+        </div>
+
+        <!-- Module 12 -->
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge">Module 12</span>
+            <span style="color: var(--accent-emerald);">● Complete</span>
+          </div>
+          <h3 class="module-title">Capstone Automated Validation</h3>
+          <p class="module-desc">
+            Full automated test suite with 22 regression and API integration tests, runbooks, acceptance criteria checklists, and GitHub Pages documentation.
+          </p>
+          <div class="module-meta">
+            <span>tests/test_api.py</span>
+            <span>22/22 Passing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ML & SHAP Section -->
+  <section class="section" id="ml-explainability">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Interpretability & Trust</span>
+        <h2 class="section-title">Model Explainability with SHAP</h2>
+        <p class="section-desc">
+          Instead of treating the Random Forest classifier as an opaque black box, SHAP TreeExplainer quantifies each telemetry feature's marginal contribution to failure probability.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center;" class="sim-grid">
+        <div>
+          <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 14px;">Why Explainability Matters in SRE</h3>
+          <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem;">
+            When an automated system flags an impending outage, on-call engineers cannot act without understanding the root driver. SHAP provides:
+          </p>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 0.9rem; color: var(--text-secondary);">
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span style="color: var(--accent-cyan); font-weight: 700;">✓</span>
+              <span><strong>Directional Attribution:</strong> Distinguishes whether failure risk is driven by memory pressure versus CPU thrashing.</span>
+            </li>
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span style="color: var(--accent-cyan); font-weight: 700;">✓</span>
+              <span><strong>Confidence Calibrated:</strong> Cross-validated with ROC-AUC 0.751 on baseline training datasets.</span>
+            </li>
+            <li style="display: flex; gap: 10px; align-items: flex-start;">
+              <span style="color: var(--accent-cyan); font-weight: 700;">✓</span>
+              <span><strong>Actionable Remediation:</strong> Pairs top feature drivers with specific, targeted runbooks (e.g., scaling vs restarting pods).</span>
+            </li>
+          </ul>
+        </div>
+
+        <div style="background: var(--bg-card); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: center;">
+          <img src="assets/shap_waterfall.png" alt="SHAP Waterfall Plot" style="max-width: 100%; height: auto; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.05);" onerror="this.style.display='none'">
+          <div style="margin-top: 10px; font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted);">
+            SHAP Waterfall Plot: Feature Attribution on High-Risk Incident Sample
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technology Stack Section -->
+  <section class="section" id="tech-stack">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Production Stack</span>
+        <h2 class="section-title">Built with Modern Cloud-Native Technologies</h2>
+        <p class="section-desc">
+          Engineered using industry-standard DevOps, SRE, and machine learning tools.
+        </p>
+      </div>
+
+      <div class="tech-cloud">
+        <div class="tech-badge"><span>🐍</span><span>Python 3.11</span></div>
+        <div class="tech-badge"><span>⚡</span><span>FastAPI</span></div>
+        <div class="tech-badge"><span>📊</span><span>Prometheus 3.0</span></div>
+        <div class="tech-badge"><span>📈</span><span>Grafana</span></div>
+        <div class="tech-badge"><span>🐳</span><span>Docker & Compose</span></div>
+        <div class="tech-badge"><span>☸️</span><span>Kubernetes / Minikube</span></div>
+        <div class="tech-badge"><span>🤖</span><span>Scikit-Learn</span></div>
+        <div class="tech-badge"><span>🔍</span><span>SHAP TreeExplainer</span></div>
+        <div class="tech-badge"><span>☁️</span><span>Cloudflare Tunnel</span></div>
+        <div class="tech-badge"><span>🧪</span><span>Pytest</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- API Documentation Section -->
+  <section class="section" id="api-reference">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">REST Endpoints</span>
+        <h2 class="section-title">Platform API Reference</h2>
+        <p class="section-desc">
+          All endpoints provide JSON payloads compliant with enterprise OpenAPI/Swagger 3.0 specifications.
+        </p>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Endpoint</th>
+              <th>Description</th>
+              <th>Safeguard / Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="http-method http-get">GET</span></td>
+              <td><code>/health</code></td>
+              <td>Service health check and dependency readiness probe</td>
+              <td>Always enabled</td>
+            </tr>
+            <tr>
+              <td><span class="http-method http-get">GET</span></td>
+              <td><code>/metrics</code></td>
+              <td>Standard Prometheus scraper endpoint</td>
+              <td>PromQL Compatible</td>
+            </tr>
+            <tr>
+              <td><span class="http-method http-get">GET</span></td>
+              <td><code>/api/metrics/live</code></td>
+              <td>Live PromQL query aggregator with missing metric reporting</td>
+              <td>Module 8</td>
+            </tr>
+            <tr>
+              <td><span class="http-method http-post">POST</span></td>
+              <td><code>/api/ml/predict</code></td>
+              <td>Predict failure risk and classification from telemetry feature vector</td>
+              <td>Module 3</td>
+            </tr>
+            <tr>
+              <td><span class="http-method http-post">POST</span></td>
+              <td><code>/api/ml/explain</code></td>
+              <td>Extract local SHAP feature attributions and top failure drivers</td>
+              <td>Module 4</td>
+            </tr>
+            <tr>
+              <td><span class="http-method http-post">POST</span></td>
+              <td><code>/api/remediation/plan</code></td>
+              <td>Plan allowlisted remediation action with namespace validation</td>
+              <td>Dry-Run Default (executed: false)</td>
+            </tr>
+            <tr>
+              <td><span class="http-method http-post">POST</span></td>
+              <td><code>/api/orchestration/analyze</code></td>
+              <td>End-to-end incident analysis, risk scoring, and command recommendation</td>
+              <td>Module 11 Unified</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content">
+      <div>
+        <div style="font-weight: 700; font-size: 1.05rem;">AIOps Observability & Remediation Platform</div>
+        <div style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 4px;">
+          Created by <strong>N Harthik Reddy</strong> • DevOps & AIOps Capstone Project
+        </div>
+      </div>
+
+      <ul class="footer-links">
+        <li><a href="https://github.com/harthik17/DevOps-Project" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
+        <li><a href="#simulator">Live Simulator</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="portfolio.js"></script>
+</body>
+</html>

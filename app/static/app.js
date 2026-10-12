@@ -178,6 +178,39 @@ document.addEventListener('DOMContentLoaded', () => {
       errCard.className = errorRate > 0.05 ? 'stat-value text-danger' : 'stat-value';
     }
 
+    // Automatic Live ML Prediction update on Overview Card
+    const cardRisk = document.getElementById('card-failure-risk');
+    const cardMeta = document.getElementById('card-failure-meta');
+    const liveCpu = metrics.cpu_usage || 18.0;
+    const liveMem = metrics.memory_usage || 24.0;
+    fetch('/api/ml/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        cpu_usage: liveCpu,
+        memory_usage: liveMem,
+        latency_ms: latency || 35.0,
+        error_rate: errorRate || 0.0,
+        request_rate: reqRate || 12.0,
+        threshold: 0.5
+      })
+    })
+    .then(r => r.json())
+    .then(pred => {
+      if (cardRisk && cardMeta) {
+        const riskPct = Math.round((pred.estimated_failure_risk || pred.failure_probability || 0) * 100);
+        if (pred.predicted_failure) {
+          cardRisk.textContent = 'Elevated Risk';
+          cardRisk.className = 'stat-value text-danger';
+        } else {
+          cardRisk.textContent = 'Nominal';
+          cardRisk.className = 'stat-value text-success';
+        }
+        cardMeta.textContent = `Estimated Risk: ${riskPct}% (Live Model)`;
+      }
+    })
+    .catch(() => {});
+
     // Update Telemetry Table
     const tableBody = document.getElementById('telemetry-table-body');
     if (tableBody) {

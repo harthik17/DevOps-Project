@@ -90,6 +90,43 @@
           <div class="stat-label">Dry-Run K8s Safety Plan</div>
         </div>
       </div>
+
+      <!-- Live Backend & Cloudflare Tunnel Hub -->
+      <div class="backend-hub-card">
+        <div class="backend-hub-header">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+              <span>🌐</span> Live Backend & Cloudflare Tunnel Hub
+            </h3>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px;">
+              GitHub Pages hosts this static portfolio. Connect your live FastAPI backend, Prometheus observability stack, or Cloudflare Tunnel below:
+            </p>
+          </div>
+          <div class="backend-status-pill offline" id="backend-status-pill">
+            <span class="pulse-dot" style="background: var(--text-muted); box-shadow: none;" id="backend-pulse-dot"></span>
+            <span id="backend-status-text">Backend: Checking...</span>
+          </div>
+        </div>
+
+        <div class="backend-input-group">
+          <input type="text" id="backend-url-input" class="backend-url-input" value="http://localhost:8000" placeholder="e.g. https://your-tunnel.trycloudflare.com or http://localhost:8000">
+          <button class="btn btn-secondary btn-sm" id="check-backend-btn">
+            <span>🔄 Test Connection</span>
+          </button>
+        </div>
+
+        <div class="backend-actions">
+          <a href="http://localhost:8000/dashboard" target="_blank" class="btn btn-primary btn-sm" id="link-dashboard">
+            <span>⚡ Open Live AIOps Dashboard</span> ↗
+          </a>
+          <a href="http://localhost:8000/docs" target="_blank" class="btn btn-secondary btn-sm" id="link-docs">
+            <span>📑 Swagger API Docs (/docs)</span> ↗
+          </a>
+          <a href="http://localhost:8000/metrics" target="_blank" class="btn btn-secondary btn-sm" id="link-metrics">
+            <span>📊 Prometheus Scraper (/metrics)</span> ↗
+          </a>
+        </div>
+      </div>
     </div>
   </header>
 

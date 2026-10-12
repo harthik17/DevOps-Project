@@ -178,6 +178,76 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Live Backend & Cloudflare Tunnel Hub Logic
+  const backendInput = document.getElementById('backend-url-input');
+  const checkBackendBtn = document.getElementById('check-backend-btn');
+  const backendStatusPill = document.getElementById('backend-status-pill');
+  const backendStatusText = document.getElementById('backend-status-text');
+  const backendPulseDot = document.getElementById('backend-pulse-dot');
+  const linkDashboard = document.getElementById('link-dashboard');
+  const linkDocs = document.getElementById('link-docs');
+  const linkMetrics = document.getElementById('link-metrics');
+
+  const savedBackendUrl = localStorage.getItem('aiops_backend_url') || 'http://localhost:8000';
+  if (backendInput) {
+    backendInput.value = savedBackendUrl;
+    updateBackendLinks(savedBackendUrl);
+
+    checkBackendBtn.addEventListener('click', () => {
+      const url = backendInput.value.trim().replace(/\/+$/, '');
+      localStorage.setItem('aiops_backend_url', url);
+      updateBackendLinks(url);
+      testBackendHealth(url);
+    });
+
+    backendInput.addEventListener('change', () => {
+      const url = backendInput.value.trim().replace(/\/+$/, '');
+      localStorage.setItem('aiops_backend_url', url);
+      updateBackendLinks(url);
+      testBackendHealth(url);
+    });
+
+    testBackendHealth(savedBackendUrl);
+  }
+
+  function updateBackendLinks(baseUrl) {
+    if (!baseUrl) return;
+    if (linkDashboard) linkDashboard.href = `${baseUrl}/dashboard`;
+    if (linkDocs) linkDocs.href = `${baseUrl}/docs`;
+    if (linkMetrics) linkMetrics.href = `${baseUrl}/metrics`;
+  }
+
+  async function testBackendHealth(baseUrl) {
+    if (!backendStatusText) return;
+    backendStatusText.textContent = 'Backend: Checking...';
+    backendStatusPill.className = 'backend-status-pill offline';
+    backendPulseDot.style.background = '#94a3b8';
+    backendPulseDot.style.boxShadow = 'none';
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const res = await fetch(`${baseUrl}/health`, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const data = await res.json();
+        backendStatusPill.className = 'backend-status-pill online';
+        backendStatusText.textContent = `● Backend: Online (${data.service || 'healthy'})`;
+        backendPulseDot.style.background = '#34d399';
+        backendPulseDot.style.boxShadow = '0 0 10px #34d399';
+      } else {
+        throw new Error(`HTTP ${res.status}`);
+      }
+    } catch (e) {
+      backendStatusPill.className = 'backend-status-pill offline';
+      backendStatusText.textContent = '○ Backend: Offline (Using Simulator)';
+      backendPulseDot.style.background = '#94a3b8';
+      backendPulseDot.style.boxShadow = 'none';
+    }
+  }
+
   // Run initial simulation
   updateSimulation();
 });
+

@@ -188,7 +188,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const linkDocs = document.getElementById('link-docs');
   const linkMetrics = document.getElementById('link-metrics');
 
-  const savedBackendUrl = localStorage.getItem('aiops_backend_url') || 'http://localhost:8000';
+  const DEFAULT_BACKEND_URL = 'https://faf726810632aa.lhr.life';
+  let savedBackendUrl = localStorage.getItem('aiops_backend_url');
+  if (!savedBackendUrl || savedBackendUrl.includes('localhost')) {
+    savedBackendUrl = DEFAULT_BACKEND_URL;
+    localStorage.setItem('aiops_backend_url', DEFAULT_BACKEND_URL);
+  }
+
   if (backendInput) {
     backendInput.value = savedBackendUrl;
     updateBackendLinks(savedBackendUrl);
